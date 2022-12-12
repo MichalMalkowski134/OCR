@@ -40,6 +40,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -69,6 +72,29 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(MainActivity.this);
+
+                try
+                {
+                    URL url = new URL("http://proz.pythonanywhere.com/getDescription");
+                    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                    httpCon.setDoOutput(true);
+                    httpCon.setRequestMethod("POST");
+
+                    httpCon.setRequestProperty("Content-Type", "application/json");
+                    httpCon.setRequestProperty("Accept", "application/json");
+
+                    String jsonInputString = "{Apap}";
+                    try(OutputStream os = httpCon.getOutputStream())
+                    {
+                        byte[] in = jsonInputString.getBytes("utf-8");
+                        os.write(in, 0, in.length);
+                    }
+                    httpCon.getResponseMessage();
+                    httpCon.disconnect();
+                }
+                catch(Exception e)
+                {
+                }
             }
         });
 
